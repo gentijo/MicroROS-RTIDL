@@ -1,9 +1,14 @@
 %define api.value.type {int}
 %parse-param {int *ret}
 
+ 
+%define parse.error detailed
+%glr-parser
+
+
 %code top {
     #include <stdio.h>
-
+    #define YYDEBUG 1
     extern int yylex(void);
 
     static void yyerror(int *ret, const char* s) {
@@ -11,12 +16,19 @@
     }
 }
 
-%token MESSAGE_SEPARATOR ROSBAG_MESSAGE_SEPARATOR ASSIGNMENT STRING_ASSIGNMENT HASH COMMENT STRING_HASH
-%token IDENTIFIER STRING_IDENTIFIER INT8 UINT8 INT16 UINT16 UINT32 INT32 BYTE CHAR FLOAT32 FLOAT64
-%token INT64 UINT64 TIME DURATION STRING BOOL TRUE FALSE SLASH OPEN_BRACKET CLOSE_BRACKET STRING_CLOSE_BRACKET
-%token INTEGER_LITERAL STRING_INTEGER_LITERAL REAL_LITERAL PLUS MINUS STRING_VALUE STRING_OPEN_BRACKET
-%token WHITESPACES NEWLINE STRING_WHITESPACES STRING_NEWLINE COMMENT_NEWLINE Lowercase Uppercase Digit
-%token Assignment OpenBracket Hash CloseBracket STRING_ASSIGNMENT_NEWLINE NEWLINES  InputCharacter
+%token  INT8 UINT8 INT16 UINT16 UINT32 INT32 BYTE CHAR FLOAT32 FLOAT64
+%token  INT64 UINT64 TIME DURATION STRING BOOL 
+
+%token  TRUE FALSE SLASH PLUS MINUS 
+%token  MESSAGE_SEPARATOR ROSBAG_MESSAGE_SEPARATOR 
+
+%token  STRING_ASSIGNMENT STRING_HASH STRING_CLOSE_BRACKET STRING_IDENTIFIER STRING_INTEGER_LITERAL 
+%token  STRING_VALUE STRING_OPEN_BRACKET 
+%token   ASSIGNMENT 
+%token  HASH IDENTIFIER OPEN_BRACKET CLOSE_BRACKET 
+
+%token  INTEGER_LITERAL REAL_LITERAL COMMENT YYEOF NEWLINE
+%start ros_message_input
 %%
 
 // Grammar rules
@@ -26,88 +38,51 @@
 */
 
 /* ROS Message files */
-ros_file_input
-    : ros_message_input
-    | ros_action_input
-    | ros_service_input
+
+ros_message_input: 
+    | ros_message {printf("\nros msg");}
+    | ros_message NEWLINE ros_message
     ;
 
-ros_message_input
-    :   ros_message 
-    ;
-
-ros_action_input
-    : ros_message MESSAGE_SEPARATOR ros_message MESSAGE_SEPARATOR ros_message 
-    ;
-
-ros_service_input
-    : ros_message MESSAGE_SEPARATOR ros_message 
-    ;
-
-/* ROSBAG Message format */
-rosbag_input
-    : /* Empty for Zero or More */
-    | ros_message rosbag_nested_message 
-    | ros_message rosbag_nested_message rosbag_nested_message 
-
-    ;
-
-rosbag_nested_message
-    : ROSBAG_MESSAGE_SEPARATOR ros_type ros_message
-    ;
 
 ros_message
-    : /* Empty for Zero or more */
-    | ros_message_ ros_message_
-    ;
-
-ros_message_
-    : field_declaration 
-    | constant_declaration 
-    | comment
+    : field_declaration     {printf("\nros field");}
+    | comment               {printf("\nros comment");}  
     ;
     
-field_declaration
-    : type          identifier
+ field_declaration
+    : type          identifier  {printf("\nros field type");}
     | array_type    identifier
     ;
     
-constant_declaration
-    : integral_type identifier ASSIGNMENT integral_value
-    | floating_point_type identifier ASSIGNMENT integral_value 
-    | floating_point_type identifier ASSIGNMENT floating_point_value
-    | boolean_type identifier ASSIGNMENT bool_value 
-    | boolean_type identifier ASSIGNMENT integral_value
-    | string_type identifier STRING_ASSIGNMENT string_value
-    ;
- 
+
 comment
-    : HASH COMMENT
-    | STRING_HASH 
-    | HASH
+    : HASH COMMENT {printf("\ncommenthash comment");}
+    | STRING_HASH  {printf("\ncomment string hash");}
+    | HASH {printf("\ncomment  hash");}
     ;
 
 identifier
-    : IDENTIFIER
-    | STRING_IDENTIFIER
-    | INT8
-    | UINT8
-    | INT16
-    | UINT16
-    | INT32
-    | UINT32
-    | INT64
-    | UINT64
-    | BYTE
-    | CHAR
-    | FLOAT32
-    | FLOAT64
-    | TIME
-    | DURATION
-    | STRING
-    | BOOL
-    | TRUE
-    | FALSE
+    : IDENTIFIER  {printf("\nIDENTIFIER");}
+    | STRING_IDENTIFIER {printf("\nSTRING_IDENTIFIER");}
+    | INT8 {printf("\nINT8_IDENTIFIER");}
+    | UINT8 {printf("\nUINT8_IDENTIFIER");}
+    | INT16 {printf("\nINT16_IDENTIFIER");}
+    | UINT16 {printf("\nUINT16_IDENTIFIER");}
+    | INT32 {printf("\nINT32_IDENTIFIER");}
+    | UINT32 {printf("\nUINT32_IDENTIFIER");}
+    | INT64 {printf("\nINT64_IDENTIFIER");}
+    | UINT64 {printf("\nUINT64_IDENTIFIER");}
+    | BYTE {printf("\nBYTE _IDENTIFIER");}
+    | CHAR {printf("\nCHAR_IDENTIFIER");}
+    | FLOAT32 {printf("\nFLOAT32_IDENTIFIER");}
+    | FLOAT64 {printf("\nFLOAT64_IDENTIFIER");}
+    | TIME {printf("\nTIME_IDENTIFIER");}
+    | DURATION {printf("\nDURATION_IDENTIFIER");}
+    | STRING {printf("\nSTRING_IDENTIFIER 2");}
+    | BOOL {printf("\nBOOL_IDENTIFIER");}
+    | TRUE {printf("\nTRUE_IDENTIFIER");}
+    | FALSE {printf("\nFALSE_IDENTIFIER");}
     ;
 
 
@@ -117,12 +92,12 @@ identifier
  
 /* Field types are all built in types or custom message types */
 type
-    : integral_type
-    | floating_point_type
-    | temportal_type
-    | boolean_type
-    | string_type
-    | ros_type
+    : integral_type {printf("\nintegral_type");}
+    | floating_point_type {printf("\nfloating_point_type");}
+    | temportal_type {printf("\ntemportal_type");}
+    | boolean_type {printf("\nboolean_type");}
+    | string_type {printf("\nstring_type");}
+    | ros_type {printf("\nros_type");}
     ;
 
 ros_type
@@ -146,16 +121,16 @@ fixed_array_type
     ;
 
 integral_type 
-	: INT8
-	| UINT8
-	| INT16
-	| UINT16
-	| INT32
-	| UINT32
-	| INT64
-	| UINT64
-	| BYTE
-	| CHAR
+	: INT8 {printf("\n INT8");}
+	| UINT8 {printf("\n UINT8");}
+	| INT16 {printf("\n INT16");} 
+	| UINT16 {printf("\n UINT16");}
+	| INT32 {printf("\n INT32");}
+	| UINT32 {printf("\n UINT32");}
+	| INT64 {printf("\n INT64");}
+	| UINT64 {printf("\n UINT64");}
+	| BYTE {printf("\n BYTE");}
+	| CHAR {printf("\n CHAR");}
 	;
 
 floating_point_type 
