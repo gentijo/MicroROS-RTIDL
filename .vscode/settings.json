@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "parser.h": "c",
+        "datatypecatalog.h": "c",
+        "string": "cpp"
+    }
+}

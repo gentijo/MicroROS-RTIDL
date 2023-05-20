@@ -40,49 +40,47 @@ mesg_separator  "---"
 
 %%
 
-<STRING_DECL_MODE>{lex_assignment}            {  printf("\nBegin SAM"); BEGIN(STRING_ASSIGNMENT_MODE); }
+<STRING_DECL_MODE>{lex_assignment}            { BEGIN(STRING_ASSIGNMENT_MODE); }
 <STRING_DECL_MODE>{lex_identifier}            { return STRING_IDENTIFIER; }
 <STRING_DECL_MODE>{open_bracket}              { return STRING_OPEN_BRACKET; }
 <STRING_DECL_MODE>{close_bracket}             { return STRING_CLOSE_BRACKET; }
 <STRING_DECL_MODE>{integer_literal}           { return STRING_INTEGER_LITERAL; }
 
-<STRING_DECL_MODE>{hash}                      { printf("\nBegin CM"); BEGIN(COMMENT_MODE); return STRING_HASH; }
-<STRING_DECL_MODE>{input_character}+          { printf("\n String text"); }       
-<STRING_DECL_MODE>{newline}                   { printf("\nBegin 0");  BEGIN(INITIAL); }
+<STRING_DECL_MODE>{hash}                      { BEGIN(COMMENT_MODE); return STRING_HASH; }
+<STRING_DECL_MODE>.+                          { return STRING_VALUE; }       
+<STRING_DECL_MODE>{newline}                   { BEGIN(INITIAL); }
 
-<STRING_ASSIGNMENT_MODE>{input_character}+                 
-<STRING_ASSIGNMENT_MODE>{newline}            {printf("\nBegin 0");  BEGIN(INITIAL); }
+<STRING_ASSIGNMENT_MODE>.+                 
+<STRING_ASSIGNMENT_MODE>{newline}            { BEGIN(INITIAL); }
 
-<COMMENT_MODE>{input_character}+			{ printf("\n Comment text");  return COMMENT; }                    
-<COMMENT_MODE>{newline}					    { printf("\nBegin 0 from comment"); BEGIN(INITIAL); }   
- 
-<COMMENT_MODE>.*			{ printf("\n Comment text 2");  return COMMENT; }                    
+<COMMENT_MODE>.+			                { return COMMENT; }                    
+<COMMENT_MODE>{newline}					    { BEGIN(INITIAL); }   
 
 
-bool 		{ return BOOL; }
-int8		{ return INT8; }                       
-uint8		{ return UINT8; }                      
-byte		{ return BYTE; }                       
-char		{ return CHAR; }                      
-int16		{ return INT16; }                      
-uint16		{ return UINT16; }                     
-int32		{ return INT32; }                     
-uint32		{ return UINT32; }                    
-int64		{ return INT64; }                      
-uint64		{ return UINT64; }                    
-float32		{ return FLOAT32; }                    
-float64		{ return FLOAT64; }                    
-string		{ printf("\nBegin SDM"); BEGIN(STRING_DECL_MODE); return STRING; }                    
-time		{ return TIME; }                       
-duration	{ return DURATION; }                   
-{slash} 	{ return SLASH; }  
+bool 		{ yylval.ident.name=strdup(yytext); return BOOL; }
+int8		{ yylval.ident.name=strdup(yytext); return INT8; }                       
+uint8		{ yylval.ident.name=strdup(yytext); return UINT8; }                      
+byte		{ yylval.ident.name=strdup(yytext); return BYTE; }                       
+char		{ yylval.ident.name=strdup(yytext); return CHAR; }                      
+int16		{ yylval.ident.name=strdup(yytext); return INT16; }                      
+uint16		{ yylval.ident.name=strdup(yytext); return UINT16; }                     
+int32		{ yylval.ident.name=strdup(yytext); return INT32; }                     
+uint32		{ yylval.ident.name=strdup(yytext); return UINT32; }                    
+int64		{ yylval.ident.name=strdup(yytext); return INT64; }                      
+uint64		{ yylval.ident.name=strdup(yytext); return UINT64; }                    
+float32		{ yylval.ident.name=strdup(yytext); return FLOAT32; }                    
+float64		{ yylval.ident.name=strdup(yytext); return FLOAT64; }                    
+string		{ BEGIN(STRING_DECL_MODE); yylval.ident.name=strdup(yytext); return STRING; }                    
+time		{ yylval.ident.name=strdup(yytext); return TIME; }                       
+duration	{ yylval.ident.name=strdup(yytext); return DURATION; }                   
+{slash} 	{ yylval.ident.name=strdup(yytext); return SLASH; }  
 
 
 {lex_assignment}		{ return ASSIGNMENT; }
 {open_bracket} 			{ return OPEN_BRACKET; }      
 
 {close_bracket}			{ return CLOSE_BRACKET; }     
-{hash} 				    { printf("Begin Comment"); BEGIN(COMMENT_MODE);  return HASH; }                  
+{hash} 				    { BEGIN(COMMENT_MODE);  return HASH; }                  
 
 {plus}				    { return PLUS; }                       
 {minus}				    { return MINUS; }                                       
@@ -91,18 +89,18 @@ duration	{ return DURATION; }
 
 {integer_literal}	    { return INTEGER_LITERAL; }            
 {digit}*{dot}{digit}+   { return REAL_LITERAL; }               
-
+ 
 {true}				{ return TRUE; }                       
 {false}				{ return FALSE; }                      
 
 
-<INITIAL>{lex_identifier}	    { return IDENTIFIER; }
+<INITIAL>{lex_identifier}	    {yylval.ident.name=strdup(yytext); return IDENTIFIER; }
 
 
 "="+{newline}"MSG:" { return ROSBAG_MESSAGE_SEPARATOR; } 
 
-{newline}       { BEGIN(INITIAL); return NEWLINE; }
+{newline}       { BEGIN(INITIAL); }
 
-.          { printf("default"); }
+.               { }
 
 %%
