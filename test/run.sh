@@ -1,1 +1,1 @@
-../build/uros-rtidl -baseType Twist -typeDir ./msg/ -outDir ./output -pyTemplate pythonTypeTemplate.j2
+./uros-rtidl -baseType Twist -typeDir ./msg/ -outDir ./output -pyTemplate pythonTypeTemplate.j2
