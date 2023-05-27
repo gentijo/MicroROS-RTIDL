@@ -35,9 +35,10 @@ std::string buildSelfParams(DataTypeDefinition *dataDef);
 
 void buildDataCatalog(const char* baseType, const char* typeDir);
 
-void createPythonArtifacts(std::string templateFilename);
-void createPythonArtifact(std::string filename, DataTypeDefinition *typeDef);
+void createPythonArtifacts(std::string outDir, std::string templateFilename);
+void createPythonArtifact(std::string outDir, std::string filename, DataTypeDefinition *typeDef);
 
+void build_DTI_table_for_type(std::ofstream &file, string baseType, int index, bool isSubType);
 
 std::map<std::string, std::string> g_typeLocatorMap;
 
@@ -110,11 +111,39 @@ extern "C" int main (int argc, char **argv)
     g_DataTypeCatalog.print();
     
     std::string filename = templateName;
-    createPythonArtifacts(filename); 
+    createPythonArtifacts(std::string(outDir),filename); 
 
+    std::ofstream dti_file;
+    std::string dti_filename = std::string(outDir) + "/" + std::string(baseType) + ".dti";
+    dti_file.open (dti_filename);
+    build_DTI_table_for_type(dti_file, baseType, 0, false);
+    dti_file.close();
 
     cout << "\r\n End \r\n";
 };
+
+void build_DTI_table_for_type(std::ofstream &file, string baseType, int index, bool isSubType) {
+
+  int initialIndex = index;
+  int subIndex = 0;
+
+  std::map<std::string, DataTypeDefinition*> dataMap = g_DataTypeCatalog.getDataTypeCatalog();
+
+  DataTypeDefinition *type = dataMap.at(string(baseType));
+
+  std::list<DataField> fields = type->getFields();
+  for (auto const& i : fields) {
+
+    if (isSubType) { subIndex++; } 
+    else if (initialIndex == 0) { index++; }
+
+    file  << index << ", " << subIndex <<  ", " << i.typeName <<  ", " << 
+              i.typePrefix <<  ", " << i.valueName <<  ", " << i.valueType << "\r\n";
+              
+    if (i.valueType == rt_ros) build_DTI_table_for_type(file, i.typeName, index, true);
+
+  }
+}
 
 void buildDataCatalog(const char* baseType, const char* typeDir) {
 
@@ -136,23 +165,30 @@ void buildDataCatalog(const char* baseType, const char* typeDir) {
   }
 }
 
-void createPythonArtifacts(std::string templateFilename) {
+void createPythonArtifacts(std::string outDir, std::string templateFilename) {
 
   std::map<std::string, DataTypeDefinition*> dataMap = g_DataTypeCatalog.getDataTypeCatalog();
 
-  for (auto typeDef : dataMap) {
-    createPythonArtifact(templateFilename, typeDef.second);
+  for (auto dataMapEntry : dataMap) {
+
+    DataTypeDefinition *typeDef = dataMapEntry.second;
+    createPythonArtifact(outDir, templateFilename, typeDef);
+    
   }
 };
 
-void createPythonArtifact(std::string filename, DataTypeDefinition *typeDef) {
+void createPythonArtifact(std::string outDir, std::string filename, DataTypeDefinition *typeDef) {
+
     std::ifstream t(filename, std::ios::binary);
+
     if (t.is_open()) {
       t.seekg(0, std::ios::end);
       size_t size = t.tellg();
       std::string buffer(size, ' ');
       t.seekg(0);
       t.read(&buffer[0], size); 
+      t.close();
+
       Jinja2CppLight::Template mytemplate(buffer);
 
       mytemplate.setValue("type", typeDef->getTypeName());
@@ -161,7 +197,11 @@ void createPythonArtifact(std::string filename, DataTypeDefinition *typeDef) {
       mytemplate.setValue("selfParams", buildSelfParams(typeDef));
 
       string result = mytemplate.render();
-      cout << result;
+
+      std::string outFilename = outDir + "/" + typeDef->getTypeName() + ".py";
+      std::ofstream outFile(outFilename);
+      outFile << result;
+      outFile.close();
     }
 
 }

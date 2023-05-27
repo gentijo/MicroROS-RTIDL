@@ -10,4 +10,5 @@ RUN apt -y update && \
         emacs nano \
         cmake git \
         gdb gdbserver && \
-    pip3 install ampy rshell
+    pip3 install adafruit-ampy rshell
+ 
