@@ -47,6 +47,11 @@ the Python code
 
 * [The output folder contains the examples of the output produced for the Python artifacts and a DTI definition](test/output/)
 
+* [Example of Python Artifact](test/output/Twist.py)
+* [Template to produce Python Artifact based on a lighrwright version of Jinja](test/pythonTypeTemplate.j2)
+
+* [Example of a DTI file rendered as a CSV file](test/output/Twist.dti)
+
 # Alternatives to this approach
 This POC code could be ported back to Python using ANTLR and added as an extension to [RShell](https://github.com/dhylands/rshell) to parse, produce output files and directly load the final output to the device. This could be further extended to be used as an extension to [Visual Code Studio](https://code.visualstudio.com/docs/languages/python) or [Thonny](https://github.com/thonny/thonny/wiki/Plugins) 
 
