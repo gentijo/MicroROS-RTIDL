@@ -42,7 +42,33 @@ the Python code
 
 ![](images/Overview.png)
 
-# Real world examples.
+# Running the example Code.
+
+If you wanted to test this do the following:
+
+In the project root dir execute
+
+* buildNode.sh
+* startNode.sh
+  
+to create the docker image
+
+then connect to the running docker container using the temrminal app
+
+**Inside the terminal app execute:**
+
+* cd /opt/rosbots-rtidl/test
+* sh run.sh
+
+**If you are on a Linux host, you can also just cd to the test directory and run the same command**
+
+**Make sure to remove the contents of the Output dir to see new files build.**
+
+**You can use any other ROS type although the current parser does not support constant or array types.**
+
+
+
+# Example Code.
 * [The test folder includes an executable that will run in a Linux env or Docker container defined here](test)
 
 * [The output folder contains the examples of the output produced for the Python artifacts and a DTI definition](test/output/)
@@ -51,6 +77,12 @@ the Python code
 * [Template to produce Python Artifact based on a lighrwright version of Jinja](test/pythonTypeTemplate.j2)
 
 * [Example of a DTI file rendered as a CSV file](test/output/Twist.dti)
+
+* [Source code](src)
+  
+* Grammar files
+* [Lexer](src/lexer.l)
+* [Parser](src/parser.y)
 
 # Alternatives to this approach
 This POC code could be ported back to Python using ANTLR and added as an extension to [RShell](https://github.com/dhylands/rshell) to parse, produce output files and directly load the final output to the device. This could be further extended to be used as an extension to [Visual Code Studio](https://code.visualstudio.com/docs/languages/python) or [Thonny](https://github.com/thonny/thonny/wiki/Plugins) 
