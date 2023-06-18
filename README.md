@@ -83,8 +83,8 @@ then connect to the running docker container using the temrminal app
 * [Source code](src)
   
 * Grammar files
-* [Lexer](src/lexer.l)
-* [Parser](src/parser.y)
+  * [Lexer](src/lexer.l)
+  * [Parser](src/parser.y)
 
 # Alternatives to this approach
 This POC code could be ported back to Python using ANTLR and added as an extension to [RShell](https://github.com/dhylands/rshell) to parse, produce output files and directly load the final output to the device. This could be further extended to be used as an extension to [Visual Code Studio](https://code.visualstudio.com/docs/languages/python) or [Thonny](https://github.com/thonny/thonny/wiki/Plugins) 
