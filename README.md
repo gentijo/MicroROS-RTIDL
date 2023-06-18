@@ -50,7 +50,9 @@ the Python code
 # Alternatives to this approach
 This POC code could be ported back to Python using ANTLR and added as an extension to [RShell](https://github.com/dhylands/rshell) to parse, produce output files and directly load the final output to the device. This could be further extended to be used as an extension to [Visual Code Studio](https://code.visualstudio.com/docs/languages/python) or [Thonny](https://github.com/thonny/thonny/wiki/Plugins) 
 
-**Notes:**
+</br>
+
+# **Notes:**
 * [Original ANTLR grammar borrowed from:</br> 
 github.com/jr-robotics/RobSharper.Ros.MessageParser](https://github.com/jr-robotics/RobSharper.Ros.MessageParser)
 
