@@ -44,7 +44,7 @@ the Python code
 
 # Running the example Code.
 
-If you wanted to test this do the following:
+If you wanted to run the sample code, do the following:
 
 In the project root dir execute
 
@@ -59,6 +59,8 @@ then connect to the running docker container using the temrminal app
 
 * cd /opt/rosbots-rtidl/test
 * sh run.sh
+
+* Inspect run.sh to see the parameters
 
 **If you are on a Linux host, you can also just cd to the test directory and run the same command**
 
