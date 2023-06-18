@@ -42,10 +42,45 @@ the Python code
 
 ![](images/Overview.png)
 
-# Running the example Code.
+# How this would work on the device. 
 
-If you wanted to run the sample code, do the following:
+First upload .msg files along with the dependant .msg files to the device storage
+In python there will be a microros.py that is builtin to the device that support MicroRos operations
+In boot.py, you would import ROSType then add statements for all the ROSTypes you want to use on your device
+</br></br>
+> **from MicroROS import ROSType**
+> 
+> **ROSType.registerType(TypeName, msgDir,  pyDir)**
+</br>
+This would create and register the DTI structure in a memory based map
+It would also create the .py artifacts in the pyDir
+</br></br>
+Then in your code you send a message with
+</br>
+</br>
 
+> **from Twist import Twist**
+> 
+> **from MicroROS import ROSMessages**
+> 
+> **def twist:Twist**
+> 
+> **twist.linear.x = 0**
+> 
+> **twist.linear.y = 0**
+> 
+> **twist.linear.z = 0**
+> 
+> **twist.angular.x = 0**
+> 
+> **twist.angular.x = 0**
+> 
+> **twist.angular.x = 0**
+>
+> **ROSMessages.publishMsg(path:str, twist)**
+
+
+# Running the example Code as a Linux command line app.
 In the project root dir execute
 
 * buildNode.sh
