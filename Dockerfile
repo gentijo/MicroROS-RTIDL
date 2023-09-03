@@ -10,5 +10,8 @@ RUN apt -y update && \
         emacs nano \
         cmake git \
         gdb gdbserver && \
-    pip3 install adafruit-ampy rshell
- 
+        python3-antlr4 \
+    pip3 install adafruit-ampy rshell \
+    pip3 install antlr4-python3-runtime \
+    pip3 install TextIO PyGithub
+    
