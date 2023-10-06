@@ -12,6 +12,6 @@ RUN apt -y update && \
         gdb gdbserver && \
         python3-antlr4 \
     pip3 install adafruit-ampy rshell \
-    pip3 install antlr4-python3-runtime \
     pip3 install TextIO PyGithub
     
+#   pip3 install antlr4-python3-runtime \
